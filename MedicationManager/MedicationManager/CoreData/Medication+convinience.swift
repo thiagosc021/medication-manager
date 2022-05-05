@@ -13,4 +13,14 @@ extension Medication {
         self.name = name
         self.timeOfDay = timeOfDay
     }
+    
+    func wasTakenToday() -> Bool {
+        guard let mutableTakenDates = self.mutableSetValue(forKey: "takenDates") as? Set<TakenDate>,
+                  mutableTakenDates.contains(where: { guard let date = $0.date else { return false }
+                  return Calendar.current.isDateInToday(date) }) else {
+            return false
+        }
+        
+        return true
+    }
 }
