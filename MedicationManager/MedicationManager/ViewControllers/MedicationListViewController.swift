@@ -14,11 +14,25 @@ class MedicationListViewController: UIViewController, UITableViewDelegate {
     private let medicationModelController = MedicationController.shared
     private let moodSurveyModelController = MoodSurveyController.shared
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         medicationModelController.fetch()
         tableView.dataSource = self
         tableView.delegate = self
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(reminderFired),
+                                               name: NSNotification.Name(Strings.medicationReminderReceived),
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(medicationWasTaken),
+                                               name: NSNotification.Name(rawValue: Strings.notificationMarkTakenActionIdentifier),
+                                               object: nil)
         
         guard let todaysMood = moodSurveyModelController.fetchTodaysMood() else {
             return
@@ -34,7 +48,7 @@ class MedicationListViewController: UIViewController, UITableViewDelegate {
     
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == "toMedicationDetails",
+        guard segue.identifier == Strings.medicationDetailSegueIdentifier,
               let destinationVC = segue.destination as? MedicationDetailViewController,
               let selectedIndexPath = tableView.indexPathForSelectedRow else {
             return
@@ -43,13 +57,25 @@ class MedicationListViewController: UIViewController, UITableViewDelegate {
     }
     
     @IBAction func surveyButtonTapped(_ sender: UIButton) {
-        guard let moodSurveyViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "moodSurveyViewController") as? MoodSurveyViewController else {
+        guard let moodSurveyViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: Strings.moodSurveyViewControllerIdentifier) as? MoodSurveyViewController else {
             return
         }
         moodSurveyViewController.delegate = self
         navigationController?.present(moodSurveyViewController, animated: true)
     }
     
+    @objc private func reminderFired() {
+        tableView.backgroundColor = .systemRed
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.tableView.backgroundColor = .systemBackground
+        }
+    }
+    
+    @objc private func medicationWasTaken() {
+        medicationModelController.fetch()
+        tableView.reloadData()
+    }
 }
 
 extension MedicationListViewController: UITableViewDataSource {
@@ -63,7 +89,7 @@ extension MedicationListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "medicationCell") as? MedicationTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Strings.medicationCellIdentifier) as? MedicationTableViewCell else {
             return UITableViewCell()
         }
         
@@ -77,6 +103,17 @@ extension MedicationListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return medicationModelController.sections[section].count > 0 ? medicationModelController.sectionHeaders[section] : nil
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard editingStyle == .delete else {
+            return
+        }
+        
+        let medication = medicationModelController.sections[indexPath.section][indexPath.row]
+        medicationModelController.delete(medication: medication)
+        tableView.deleteRows(at: [indexPath], with: .automatic)
+        
     }
 }
 
@@ -93,6 +130,5 @@ extension MedicationListViewController: MoodSurveyViewControllerDelegate {
     func moodButtonTapped(with emoji: String) {
         mentalStateButton.setTitle(emoji, for: .normal)
     }
-    
-    
 }
+

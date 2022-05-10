@@ -13,19 +13,21 @@ class MedicationController {
     
     private init() {}
     private lazy var fetchRequest: NSFetchRequest<Medication> = {
-        let request = NSFetchRequest<Medication>(entityName: "Medication")
+        let request = NSFetchRequest<Medication>(entityName: Strings.medicationEntityType)
         request.predicate = NSPredicate(value: true)
         return request
     }()
     private var takenMeds: [Medication] = []
     private var notTakenMeds: [Medication] = []
+    private var notificationScheduler = NotificationScheduler.shared
     
     var sections: [[Medication]]  { [takenMeds,notTakenMeds] }
     var sectionHeaders: [String] = ["Taken","Not Taken"]
     
     func create(name: String, timeOfDay: Date) {
-        Medication(name: name, timeOfDay: timeOfDay)
+        let medication = Medication(name: name, timeOfDay: timeOfDay)
         CoreDataStack.saveContext()
+        notificationScheduler.scheduleNotifications(for: medication)
     }
     
     func fetch() {
@@ -39,6 +41,8 @@ class MedicationController {
         medication.name = name
         medication.timeOfDay = timeOfDay
         CoreDataStack.saveContext()
+        notificationScheduler.cancelNotifications(for: medication)
+        notificationScheduler.scheduleNotifications(for: medication)
     }
     
     func markAsTaken(medication: Medication, wasTaken: Bool) {
@@ -51,15 +55,43 @@ class MedicationController {
         CoreDataStack.saveContext()
     }
     
-    
-    func delete() {
-        
+    func markAsTaken(with id: String) {
+        guard let medication = notTakenMeds.first(where: { $0.id == UUID(uuidString: id) }) else {
+            return
+        }
+        markAsTaken(medication: medication, wasTaken: true)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Strings.notificationMarkTakenActionIdentifier), object: self, userInfo: [Strings.medicationEntityIDKey: "\(id)"])
     }
+    
+    func delete(medication: Medication) {
+        deleteFromTaken(medication)
+        deleteFromNotTaken(medication)
+        CoreDataStack.context.delete(medication)
+        CoreDataStack.saveContext()
+        notificationScheduler.cancelNotifications(for: medication)
+    }
+    
+    
 }
 
 private extension MedicationController {
+    
+    func deleteFromTaken(_ medication: Medication) {
+        guard let index = takenMeds.firstIndex(of: medication) else {
+            return
+        }
+        takenMeds.remove(at: index)
+    }
+    
+    func deleteFromNotTaken(_ medication: Medication) {
+        guard let index = notTakenMeds.firstIndex(of: medication) else {
+            return
+        }
+        notTakenMeds.remove(at: index)
+    }
+    
     func deleteTakenDate(medication: Medication) {
-        let takenDateSet = medication.mutableSetValue(forKey: "takenDates")
+        let takenDateSet = medication.mutableSetValue(forKey: Strings.takenDatesEntityType)
         guard let mutableTakenDates = takenDateSet as? Set<TakenDate>,
               let takenDate = mutableTakenDates.first(where: {
                   guard let date = $0.date else { return false }

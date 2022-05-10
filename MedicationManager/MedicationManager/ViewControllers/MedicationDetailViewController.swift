@@ -19,7 +19,13 @@ class MedicationDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Medication Details"
-        configureUI()
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(reminderFired),
+                                               name: NSNotification.Name(Strings.medicationReminderReceived),
+                                               object: nil)
+        
+        configureUI()                
     }
     
     private func configureUI() {
@@ -41,15 +47,21 @@ class MedicationDetailViewController: UIViewController {
         let timeOfDay = datePicker.date
         
         if let model = model {
-            model.name = name
-            model.timeOfDay = timeOfDay
-            
+            modelController.update(medication: model, with: name, timeOfDay: timeOfDay)
         } else {
             modelController.create(name: name, timeOfDay: timeOfDay)
         }
         
         navigationController?.popViewController(animated: true)
         
+    }
+    
+    @objc private func reminderFired() {
+        view.backgroundColor = .systemRed
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.view.backgroundColor = .systemBlue
+        }
     }
     
 }

@@ -14,6 +14,8 @@
 		782305DF281B885900271289 /* MoodSurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782305DE281B885900271289 /* MoodSurveyViewController.swift */; };
 		782305E12821FF8000271289 /* MoodSurvey+convinience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782305E02821FF8000271289 /* MoodSurvey+convinience.swift */; };
 		782305E32822000D00271289 /* MoodSurveyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782305E22822000D00271289 /* MoodSurveyController.swift */; };
+		7823060728249C8700271289 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823060628249C8700271289 /* NotificationScheduler.swift */; };
+		782306092825E69B00271289 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782306082825E69B00271289 /* Strings.swift */; };
 		78655586281776AB00895121 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78655585281776AB00895121 /* AppDelegate.swift */; };
 		78655588281776AB00895121 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78655587281776AB00895121 /* SceneDelegate.swift */; };
 		7865558D281776AB00895121 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7865558B281776AB00895121 /* Main.storyboard */; };
@@ -33,6 +35,8 @@
 		782305DE281B885900271289 /* MoodSurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodSurveyViewController.swift; sourceTree = "<group>"; };
 		782305E02821FF8000271289 /* MoodSurvey+convinience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MoodSurvey+convinience.swift"; sourceTree = "<group>"; };
 		782305E22822000D00271289 /* MoodSurveyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodSurveyController.swift; sourceTree = "<group>"; };
+		7823060628249C8700271289 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
+		782306082825E69B00271289 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		78655582281776AB00895121 /* MedicationManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedicationManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		78655585281776AB00895121 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		78655587281776AB00895121 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -102,8 +106,10 @@
 				786555A2281782D500895121 /* ViewControllers */,
 				786555A3281782F700895121 /* CustomViews */,
 				78655585281776AB00895121 /* AppDelegate.swift */,
+				782306082825E69B00271289 /* Strings.swift */,
 				78655587281776AB00895121 /* SceneDelegate.swift */,
 				7865558B281776AB00895121 /* Main.storyboard */,
+				7823060628249C8700271289 /* NotificationScheduler.swift */,
 				78655591281776AE00895121 /* Assets.xcassets */,
 				78655593281776AE00895121 /* LaunchScreen.storyboard */,
 				78655596281776AE00895121 /* Info.plist */,
@@ -200,12 +206,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7823060728249C8700271289 /* NotificationScheduler.swift in Sources */,
 				782305E12821FF8000271289 /* MoodSurvey+convinience.swift in Sources */,
 				7865559F281781CB00895121 /* MedicationDetailViewController.swift in Sources */,
 				782305DF281B885900271289 /* MoodSurveyViewController.swift in Sources */,
 				782305E32822000D00271289 /* MoodSurveyController.swift in Sources */,
 				78655586281776AB00895121 /* AppDelegate.swift in Sources */,
 				7865559D281781BD00895121 /* MedicationListViewController.swift in Sources */,
+				782306092825E69B00271289 /* Strings.swift in Sources */,
 				78655590281776AB00895121 /* MedicationManager.xcdatamodeld in Sources */,
 				782305D6281785D500271289 /* MedicationController.swift in Sources */,
 				786555A1281782CC00895121 /* MedicationTableViewCell.swift in Sources */,
